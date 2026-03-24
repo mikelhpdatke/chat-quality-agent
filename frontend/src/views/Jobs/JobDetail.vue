@@ -2,33 +2,23 @@
   <div>
     <!-- Header -->
     <div class="d-flex align-center mb-2">
-      <v-btn icon="mdi-arrow-left" variant="text" :to="`/${tenantId}/jobs`" />
-      <h1 class="text-h6 text-md-h5 font-weight-bold ml-2 flex-grow-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ job?.name || '...' }}</h1>
+      <v-btn icon="mdi-arrow-left" variant="text" size="small" :to="`/${tenantId}/jobs`" />
+      <h1 class="text-subtitle-1 text-md-h5 font-weight-bold ml-1 flex-grow-1" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ job?.name || '...' }}</h1>
+      <v-btn variant="outlined" icon="mdi-pencil" size="small" :to="`/${tenantId}/jobs/${jobId}/edit`" class="ml-1" />
+      <v-btn variant="outlined" color="primary" icon="mdi-test-tube" size="small" :loading="testRunning" class="ml-1" @click="testRun" />
+      <v-btn color="primary" icon="mdi-play" size="small" :loading="triggerRunning" class="ml-1" @click="openRunDialog" />
     </div>
-    <div class="d-flex flex-wrap ga-2 mb-2 ml-12">
-      <v-btn variant="outlined" prepend-icon="mdi-pencil" size="small" :to="`/${tenantId}/jobs/${jobId}/edit`">
-        {{ $t('edit') }}
-      </v-btn>
-      <v-btn variant="outlined" color="primary" prepend-icon="mdi-test-tube" size="small" :loading="testRunning" @click="testRun">
-        Chạy thử (3 hội thoại)
-      </v-btn>
-      <v-btn color="primary" prepend-icon="mdi-play" size="small" :loading="triggerRunning" @click="openRunDialog">
-        {{ $t('run_now') }}
-      </v-btn>
-    </div>
-    <div v-if="job" class="ml-12 mb-4">
-      <div class="d-flex flex-wrap ga-2">
-        <v-chip size="small" :color="job.job_type === 'qc_analysis' ? 'primary' : 'secondary'" variant="tonal">
-          {{ job.job_type === 'qc_analysis' ? $t('job_qc') : $t('job_classification') }}
-        </v-chip>
-        <v-chip size="small" variant="tonal">{{ job.ai_provider }} / {{ job.ai_model }}</v-chip>
-        <v-chip size="small" :color="job.is_active ? 'success' : 'grey'" variant="tonal">
-          {{ job.is_active ? $t('active') : $t('inactive') }}
-        </v-chip>
-        <v-chip size="small" variant="tonal" prepend-icon="mdi-clock-outline">
-          {{ formatSchedule(job.schedule_type, job.schedule_cron) }}
-        </v-chip>
-      </div>
+    <div v-if="job" class="d-flex flex-wrap ga-1 mb-3 ml-9">
+      <v-chip size="x-small" :color="job.job_type === 'qc_analysis' ? 'primary' : 'secondary'" variant="tonal">
+        {{ job.job_type === 'qc_analysis' ? $t('job_qc') : $t('job_classification') }}
+      </v-chip>
+      <v-chip size="x-small" variant="tonal">{{ job.ai_provider }} / {{ job.ai_model }}</v-chip>
+      <v-chip size="x-small" :color="job.is_active ? 'success' : 'grey'" variant="tonal">
+        {{ job.is_active ? $t('active') : $t('inactive') }}
+      </v-chip>
+      <v-chip size="x-small" variant="tonal" prepend-icon="mdi-clock-outline">
+        {{ formatSchedule(job.schedule_type, job.schedule_cron) }}
+      </v-chip>
     </div>
 
     <!-- Run options dialog -->

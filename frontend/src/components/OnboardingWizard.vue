@@ -1,14 +1,7 @@
 <template>
-  <v-banner
-    v-if="visible"
-    color="primary"
-    class="onboarding-banner mb-4"
-    lines="one"
-  >
-    <template #prepend>
-      <v-icon>mdi-rocket-launch</v-icon>
-    </template>
-    <div class="onboarding-steps d-flex align-center ga-2">
+  <v-sheet v-if="visible" color="indigo-lighten-5" rounded class="d-flex align-center pa-2 mb-4 ga-2">
+    <v-icon color="primary" class="flex-shrink-0">mdi-rocket-launch</v-icon>
+    <div class="onboarding-steps d-flex align-center ga-1">
       <span class="text-body-2 font-weight-medium" style="white-space: nowrap;">Bắt đầu:</span>
       <v-chip
         v-for="step in steps"
@@ -17,7 +10,6 @@
         :color="step.done ? 'success' : 'default'"
         :variant="step.done ? 'flat' : 'outlined'"
         :prepend-icon="step.done ? 'mdi-check-circle' : 'mdi-circle-outline'"
-        class="mr-1"
         @click="goToStep(step)"
       >
         {{ step.title }}
@@ -32,10 +24,8 @@
         Hoàn thành!
       </v-chip>
     </div>
-    <template #actions>
-      <v-btn icon="mdi-close" variant="text" size="x-small" @click="dismiss" />
-    </template>
-  </v-banner>
+    <v-btn icon="mdi-close" variant="text" size="x-small" class="flex-shrink-0" @click="dismiss" />
+  </v-sheet>
 </template>
 
 <script setup lang="ts">
@@ -107,11 +97,9 @@ async function dismiss() {
   flex-wrap: nowrap;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  min-width: 0;
 }
 .onboarding-steps::-webkit-scrollbar {
   display: none;
-}
-.onboarding-banner :deep(.v-banner__content) {
-  overflow: visible;
 }
 </style>
