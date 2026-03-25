@@ -9,6 +9,8 @@ import (
 	"github.com/vietbui/chat-quality-agent/api/handlers"
 	"github.com/vietbui/chat-quality-agent/api/middleware"
 	"github.com/vietbui/chat-quality-agent/config"
+	"github.com/vietbui/chat-quality-agent/db"
+	"github.com/vietbui/chat-quality-agent/db/models"
 	"github.com/vietbui/chat-quality-agent/mcp"
 )
 
@@ -37,7 +39,7 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 		})
 	}
 
-	// Serve uploaded files (requires JWT auth)
+	// Serve uploaded files (requires JWT auth + tenant ownership)
 	r.GET("/api/v1/files/*filepath", middleware.JWTAuth(), func(c *gin.Context) {
 		fp := c.Param("filepath")
 		// Security: clean path and verify it stays within base directory
@@ -50,6 +52,21 @@ func SetupRouter(cfg *config.Config) *gin.Engine {
 		// Verify resolved path is within base directory
 		if !strings.HasPrefix(fullPath, "/var/lib/cqa/files") {
 			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+			return
+		}
+		// Security: verify user belongs to the tenant owning this file
+		// Path structure: /{tenantID}/{convID}/{filename}
+		pathParts := strings.SplitN(strings.TrimPrefix(cleanPath, "/"), "/", 3)
+		if len(pathParts) < 1 || pathParts[0] == "" {
+			c.JSON(http.StatusForbidden, gin.H{"error": "forbidden"})
+			return
+		}
+		fileTenantID := pathParts[0]
+		userID := middleware.GetUserID(c)
+		var count int64
+		db.DB.Model(&models.UserTenant{}).Where("user_id = ? AND tenant_id = ?", userID, fileTenantID).Count(&count)
+		if count == 0 {
+			c.JSON(http.StatusForbidden, gin.H{"error": "tenant_access_denied"})
 			return
 		}
 		c.File(fullPath)
