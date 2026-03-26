@@ -71,6 +71,19 @@ Truy cập:
 
 Lần đầu sẽ hiện trang Setup để tạo tài khoản admin.
 
+## Chạy trên localhost (Mac / Windows)
+
+Bạn có thể chạy CQA trên chính máy cá nhân bằng Docker Desktop để test trước khi deploy VPS.
+
+**Yêu cầu:**
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Mac hoặc Windows)
+- Clone repo và chạy `docker compose up -d --build`
+- Truy cập `http://localhost`
+
+**Lưu ý kết nối kênh chat:**
+- **Zalo OA**: Hỗ trợ callback URL là `http://localhost` — có thể test đầy đủ trên máy local
+- **Facebook Fanpage**: Yêu cầu HTTPS — không dùng localhost được, cần deploy lên VPS với domain + SSL
+
 ## Kiểm tra trạng thái
 
 ```bash
@@ -107,26 +120,19 @@ docker compose up -d
 
 Thêm [Watchtower](https://containrrr.dev/watchtower/) để VPS tự động pull image mới và restart khi có bản cập nhật.
 
-Mở file `docker-compose.yml` trên VPS, thêm service:
-
-```yaml
-watchtower:
-  image: containrrr/watchtower
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-  environment:
-    - WATCHTOWER_CLEANUP=true
-    - WATCHTOWER_POLL_INTERVAL=300
-  restart: unless-stopped
-```
-
-Chạy:
+Chạy lệnh sau trên VPS để cập nhật file docker-compose.yml (đã bao gồm Watchtower + label):
 
 ```bash
-docker compose up -d watchtower
+cd /opt/cqa
+curl -sfL https://raw.githubusercontent.com/tanviet12/chat-quality-agent/main/docker-compose.hub.yml -o docker-compose.yml
+docker compose up -d
 ```
 
-Watchtower sẽ kiểm tra Docker Hub mỗi 5 phút. Khi phát hiện image mới, tự pull và restart container app + nginx. Dữ liệu MySQL không bị ảnh hưởng.
+::: info Lệnh trên an toàn
+File `.env` (chứa secrets, database password) không bị ảnh hưởng. Dữ liệu MySQL nằm trong Docker volume, không bị mất.
+:::
+
+Watchtower sẽ kiểm tra Docker Hub mỗi 5 phút. Khi phát hiện image mới, tự pull và restart container **app + nginx** (có label). MySQL không có label nên không bị update, dữ liệu an toàn.
 
 ::: tip Xem log Watchtower
 ```bash

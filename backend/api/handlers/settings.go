@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -157,6 +158,7 @@ func SaveGeneralSettings(c *gin.Context) {
 		Timezone       string  `json:"timezone"`
 		Language       string  `json:"language"`
 		ExchangeRate   float64 `json:"exchange_rate_vnd"`
+		AppURL         string  `json:"app_url"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_request", "details": err.Error()})
@@ -181,6 +183,10 @@ func SaveGeneralSettings(c *gin.Context) {
 	if req.ExchangeRate > 0 {
 		upsertSetting(tenantID, "exchange_rate_vnd", fmt.Sprintf("%.0f", req.ExchangeRate), nil)
 	}
+
+	// Strip trailing slash from app URL
+	appURL := strings.TrimRight(req.AppURL, "/")
+	upsertSetting(tenantID, "app_url", appURL, nil)
 
 	c.JSON(http.StatusOK, gin.H{"message": "saved"})
 }
