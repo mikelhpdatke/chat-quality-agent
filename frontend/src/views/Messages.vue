@@ -56,7 +56,7 @@
                   hide-details
                   class="flex-grow-1"
                 />
-                <v-btn size="small" variant="tonal" color="primary" icon="mdi-export" @click="showExportDialog = true" />
+                <v-btn v-if="authStore.canEdit('messages')" size="small" variant="tonal" color="primary" icon="mdi-export" @click="showExportDialog = true" />
               </v-col>
             </v-row>
           </v-card-text>
@@ -348,12 +348,14 @@ import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { useConversationStore, type Message } from '../stores/conversations'
 import { useChannelStore } from '../stores/channels'
+import { useAuthStore } from '../stores/auth'
 import api from '../api'
 
 const route = useRoute()
 const { mdAndUp } = useDisplay()
 const conversationStore = useConversationStore()
 const channelStore = useChannelStore()
+const authStore = useAuthStore()
 
 const tenantId = computed(() => route.params.tenantId as string)
 

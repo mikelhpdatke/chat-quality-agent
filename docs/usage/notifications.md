@@ -18,9 +18,10 @@ Thông báo được cấu hình trong bước 4 khi [tạo công việc](/usage
 2. **Lấy Group ID**:
    - Tạo group Telegram (hoặc dùng group có sẵn)
    - Thêm bot vào group
-   - Gửi 1 tin nhắn bất kỳ trong group
-   - Chat với [@RawDataBot](https://t.me/RawDataBot), forward tin nhắn từ group
-   - RawDataBot trả về **Group ID** (số âm, ví dụ `-1001234567890`)
+   - Mở [Telegram Web](https://web.telegram.org) trên trình duyệt
+   - Vào group cần lấy ID
+   - Xem URL trên thanh địa chỉ, ví dụ: `https://web.telegram.org/k/#-1001234567890`
+   - **Group ID** = số sau dấu `#` (bao gồm dấu `-`, ví dụ `-1001234567890`)
 
 3. **Nhập vào CQA**:
    - Bot Token: paste token từ BotFather

@@ -1,5 +1,3 @@
-version: "3.8"
-
 # Dùng file này nếu bạn muốn dùng image có sẵn từ Docker Hub
 # thay vì build từ source code.
 #
@@ -73,6 +71,18 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
       --default-authentication-plugin=mysql_native_password
+
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    container_name: cqa-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=300
+      - WATCHTOWER_LABEL_ENABLE=true
+      - DOCKER_API_VERSION=1.40
 
 volumes:
   mysql_data:
